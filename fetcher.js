@@ -14,19 +14,20 @@ const fs = require('fs');
 
 const input = process.argv.slice(2);
 
-const link = input.toString();
+const link = input[0].toString();
+const filePath = input[1].toString();
+
 
 request(link, function (error, response, body) {
 
   console.error('error', error); // print error if one occurs
   console.log('statusCode:', response && response.statusCode);
   console.log(`Calling for ${link} >> to write body to file.`);
-
-  const writing = fs.writeFile('./index.html', body, (cb) => {
-    let stats = fs.stat('./index.html', (err, stats) => {
+    
+  const writing = fs.writeFile(filePath, body, (cb) => {
+    let stats = fs.stat(filePath, (err, stats) => {
       if (err) throw err;
       console.log(`All done! Written ${stats.size} bytes to file!`);
-
     });
   });
   
