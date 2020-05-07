@@ -1,14 +1,3 @@
-
-// deliver downloaded resources to a local file
-// when done, print out 'Downloaded and saved n bytes to ./index.html
-
-
-// use request library
-// use fs to write to the filesystem
-// use callback approach we've been working on
-// NO PIPE
-// no synchronous functions
-
 const request = require('request');
 const fs = require('fs');
 
@@ -17,18 +6,23 @@ const input = process.argv.slice(2);
 const link = input[0].toString();
 const filePath = input[1].toString();
 
+console.log(`Calling ${link} >> Requesting info to write to file.`);
 
-request(link, function (error, response, body) {
+request(link, function(error, response, body) {
 
-  console.error('error', error); // print error if one occurs
+  if (error) {
+    throw 'Sorry about that' + error;
+  }
+  if (response.statusCode !== 200) {
+    throw "That's not what I expected to happen, something went wrong. The server says: " + response.statusCode + "\n I didn't write anything to file";
+  }
+  
   console.log('statusCode:', response && response.statusCode);
-  console.log(`Calling for ${link} >> to write body to file.`);
     
-  const writing = fs.writeFile(filePath, body, (cb) => {
+  const writing = fs.writeFile(filePath, body, () => {
     let stats = fs.stat(filePath, (err, stats) => {
       if (err) throw err;
       console.log(`All done! Written ${stats.size} bytes to file!`);
     });
   });
-  
 });
